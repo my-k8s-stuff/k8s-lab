@@ -1,0 +1,36 @@
+[Unit]
+Description=kube-apiserver
+Documentation=https://github.com/kubernetes/kubernetes
+
+[Service]
+ExecStart=/usr/local/bin/kube-apiserver \
+  --allow-privileged=true \
+  --audit-log-maxage=30 \
+  --audit-log-maxbackup=3 \
+  --audit-log-maxsize=100 \
+  --audit-log-path=/var/log/audit.log \
+  --authorization-mode=Node,RBAC \
+  --bind-address=192.168.50.201 \
+  --client-ca-file=/home/vagrant/ssl/ca.crt \
+  --enable-admission-plugins=NamespaceLifecycle,NodeRestriction,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota \
+  --etcd-servers=https://192.168.50.200:2379,https://192.168.50.201:2379,https://192.168.50.202:2379 \
+  --etcd-cafile=/home/vagrant/ssl/ca.crt \
+  --etcd-certfile=/home/vagrant/ssl/etcd-server.crt \
+  --etcd-keyfile=/home/vagrant/ssl/etcd-server.key \
+  --event-ttl=1h \
+  --kubelet-certificate-authority=/home/vagrant/ssl/ca.crt \
+  --kubelet-client-certificate=/home/vagrant/ssl/kube-apiserver.crt \
+  --kubelet-client-key=/home/vagrant/ssl/kube-apiserver.key \
+  --runtime-config='api/all=true' \
+  --service-account-key-file=/home/vagrant/ssl/service-accounts.crt \
+  --service-account-signing-key-file=/home/vagrant/ssl/service-accounts.key \
+  --service-account-issuer=https://server.kubernetes.local:6443 \
+  --service-node-port-range=30000-32767 \
+  --tls-cert-file=/home/vagrant/ssl/kube-apiserver.crt \
+  --tls-private-key-file=/home/vagrant/ssl/kube-apiserver.key \
+  --v=2
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

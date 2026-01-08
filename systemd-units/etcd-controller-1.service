@@ -1,0 +1,27 @@
+[Unit]
+Description=etcd
+Documentation=https://github.com/etcd-io/etcd
+
+[Service]
+Type=notify
+ExecStart=/usr/local/bin/etcd \
+  --name controller-1 \
+  --peer-client-cert-auth \
+  --peer-trusted-ca-file=/home/vagrant/ssl/ca.crt \
+  --peer-cert-file=/home/vagrant/ssl/etcd-controller-1.crt \
+  --peer-key-file=/home/vagrant/ssl/etcd-controller-1.key \
+  --initial-advertise-peer-urls https://192.168.50.201:2380 \
+  --listen-peer-urls https://192.168.50.201:2380 \
+  --cert-file=/home/vagrant/ssl/etcd-server.crt \
+  --key-file=/home/vagrant/ssl/etcd-server.key \
+  --advertise-client-urls https://192.168.50.201:2379 \
+  --listen-client-urls https://192.168.50.201:2379,https://127.0.0.1:2379 \
+  --initial-cluster-token etcd-cluster-0 \
+  --initial-cluster controller-0=https://192.168.50.200:2380,controller-1=https://192.168.50.201:2380,controller-2=https://192.168.50.202:2380\
+  --initial-cluster-state new \
+  --data-dir=/var/lib/etcd
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
