@@ -1,0 +1,32 @@
+---
+- name: check if binary already exists
+  ansible.builtin.stat:
+    path: "{{ kube_controller_manager_binary_local_path }}/{{ kube_controller_manager_binary_name }}"
+  register: binary_file_status
+
+- name: copy kube-apiserver binary
+  get_url:
+    url: "{{ kube_apiserver_binary_remote_path }}"
+    dest: "{{ kube_apiserver_binary_local_path }}"
+  become: yes
+  when: not binary_file_status.stat.exists
+
+- name: change permissions
+  file:
+    dest: "{{ kube_apiserver_binary_local_path }}/{{ kube_apiserver_binary_name }}"
+    mode: a+x
+  become: yes
+
+- name: create systemd unit
+  template:
+    src: kube-apiserver.service.j2
+    dest: /etc/systemd/system/kube-apiserver.service
+  become: yes
+  notify:
+    - restart kube-apiserver
+
+- name: enable systemd unit
+  systemd_service:
+    name: kube-apiserver
+    enabled: true
+  become: yes

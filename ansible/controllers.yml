@@ -1,0 +1,40 @@
+---
+- name: set up controllers
+  hosts: controllers
+  remote_user: vagrant
+  roles:
+    - common
+    - etcd
+    - kube-apiserver
+    - kube-controller-manager
+    - kube-scheduler
+
+  vars:
+    cluster_name: k8s-lab
+    cluster_api_endpoint: "192.168.50.200"
+
+    etcd_binary_remote_path: https://github.com/etcd-io/etcd/releases/download/v3.6.0-rc.3/etcd-v3.6.0-rc.3-linux-amd64.tar.gz
+    etcd_binary_local_path: /usr/local/bin
+    etcd_binary_name: etcd
+    kube_apiserver_binary_remote_path: https://dl.k8s.io/v1.32.3/bin/linux/amd64/kube-apiserver
+    kube_apiserver_binary_local_path: /usr/local/bin
+    kube_apiserver_binary_name: kube-apiserver
+    kube_controller_manager_binary_remote_path: https://dl.k8s.io/v1.32.3/bin/linux/amd64/kube-controller-manager
+    kube_controller_manager_binary_local_path: /usr/local/bin
+    kube_controller_manager_binary_name: kube-controller-manager
+    kube_scheduler_binary_remote_path: https://dl.k8s.io/v1.32.3/bin/linux/amd64/kube-scheduler
+    kube_scheduler_binary_local_path: /usr/local/bin
+    kube_scheduler_binary_name: kube-scheduler
+
+    ca_crt: "{{ lookup('file','../ssl/ca.crt') + '\n' }}"
+
+- name: set up workers
+  hosts: workers
+  remote_user: vagrant
+  roles:
+    - common
+    - containerd
+  vars:
+    containerd_binary_remote_path: https://github.com/containerd/containerd/releases/download/v2.1.0-beta.0/containerd-2.1.0-beta.0-linux-amd64.tar.gz
+    containerd_binary_local_path: /bin/
+    containerd_binary_name: containerd

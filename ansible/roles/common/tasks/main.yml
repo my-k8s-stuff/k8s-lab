@@ -1,0 +1,14 @@
+---
+- name: vim install
+  ansible.builtin.apt:
+    name: vim
+    state: present
+    update_cache: true
+  become: yes
+  tags: qol
+
+- name: vim setup
+  template:
+    src: .vimrc.j2
+    dest: /home/{{ ansible_user }}/.vimrc
+  tags: qol

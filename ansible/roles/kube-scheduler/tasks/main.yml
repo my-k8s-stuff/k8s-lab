@@ -1,0 +1,38 @@
+---
+- name: check if binary already exists
+  ansible.builtin.stat:
+    path: "{{ kube_scheduler_binary_local_path }}/{{ kube_scheduler_binary_name }}"
+  register: file_status
+
+- name: copy kube-scheduler binary
+  get_url:
+    url: "{{ kube_scheduler_binary_remote_path }}"
+    dest: "{{ kube_scheduler_binary_local_path }}"
+    force: no
+  become: yes
+  when: not file_status.stat.exists
+
+- name: change permissions
+  file:
+    dest: "{{ kube_scheduler_binary_local_path }}/{{ kube_scheduler_binary_name }}"
+    mode: a+x
+  become: yes
+
+- name: generate kubeconfig
+  template:
+    src: kube-scheduler.kubeconfig.j2
+    dest: /home/{{ ansible_user }}/kube-scheduler.kubeconfig
+
+- name: create systemd unit
+  template:
+    src: kube-scheduler.service.j2
+    dest: /etc/systemd/system/kube-scheduler.service
+  become: yes
+  notify:
+    - restart kube-scheduler
+
+- name: enable systemd unit
+  systemd_service:
+    name: kube-scheduler
+    enabled: true
+  become: yes

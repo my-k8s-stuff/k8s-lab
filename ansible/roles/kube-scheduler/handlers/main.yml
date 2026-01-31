@@ -1,0 +1,5 @@
+---
+- name: restart kube-scheduler
+  systemd_service:
+    name: kube-scheduler
+    state: restarted

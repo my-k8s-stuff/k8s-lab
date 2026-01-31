@@ -1,0 +1,27 @@
+---
+- name: copy containerd binary
+  ansible.builtin.unarchive:
+    src: "{{ containerd_binary_remote_path }}"
+    dest: "{{ containerd_binary_local_path }}"
+    remote_src: yes
+  become: yes
+
+- name: change permissions
+  file:
+    dest: "{{ containerd_binary_local_path }}/{{ containerd_binary_name }}"
+    mode: a+x
+  become: yes
+
+- name: create config
+  template:
+    src: containerd.config.toml.j2
+    dest: /etc/containerd/config.toml
+  become: yes
+
+- name: create systemd unit
+  template:
+    src: containerd.service.j2
+    dest: /etc/systemd/system/containerd.service
+  become: yes
+#  notify:
+#    - restart containerd 

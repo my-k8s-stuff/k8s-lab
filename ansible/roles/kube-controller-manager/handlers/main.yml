@@ -1,0 +1,5 @@
+---
+- name: restart kube-controller-manager
+  systemd_service:
+    name: kube-controller-manager
+    state: restarted
