@@ -3,3 +3,4 @@
   systemd_service:
     name: kube-controller-manager
     state: restarted
+  become: yes

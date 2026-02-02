@@ -3,3 +3,4 @@
   systemd_service:
     name: kube-apiserver
     state: restarted
+  become: yes
