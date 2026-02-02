@@ -1,0 +1,16 @@
+[Unit]
+Description=Kubernetes Kubelet
+Documentation=https://github.com/kubernetes/kubernetes
+After=containerd.service
+Requires=containerd.service
+
+[Service]
+ExecStart={{ kubelet_binary_local_path }}/{{ kubelet_binary_name }} \
+  --config={{ kubelet_work_dir }}/kubelet-config.yaml \
+  --kubeconfig={{ kubelet_work_dir }}/kubeconfig \
+  --v=2
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

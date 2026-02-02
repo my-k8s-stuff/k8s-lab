@@ -1,0 +1,23 @@
+---
+- name: install packages
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  loop:
+    - "socat"
+    - "conntrack"
+    - "ipset"
+    - "kmod"
+  become: yes
+  tags: kubernetes
+
+- name: create kubernetes dirs
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  loop:
+   - "{{ kubernetes_work_dir }}"
+   - "{{ kubernetes_run_dir }}"
+  become: yes

@@ -4,8 +4,34 @@
   remote_user: vagrant
   roles:
     - common
+    - common-workers
+    - runc
     - containerd
+    - kubelet
+    - kube-proxy
+
   vars:
-    containerd_binary_remote_path: https://github.com/containerd/containerd/releases/download/v2.1.0-beta.0/containerd-2.1.0-beta.0-linux-amd64.tar.gz
-    containerd_binary_local_path: /bin/
+    cluster_name: k8s-lab
+    cluster_api_endpoint: "192.168.50.200"
+
+    kubernetes_work_dir: /var/lib/kubernetes
+    kubernetes_run_dir: /var/run/kubernetes
+
+    runc_binary_remote_path: https://github.com/opencontainers/runc/releases/download/v1.3.0-rc.1/runc.amd64
+    runc_binary_local_path: /usr/local/bin
+    runc_binary_name: runc
+    containerd_binary_remote_pathz: https://github.com/containerd/containerd/releases/download/v2.1.0-beta.0/containerd-2.1.0-beta.0-linux-amd64.tar.gz
+    containerd_binary_local_path: /bin
     containerd_binary_name: containerd
+    containerd_work_dir: /etc/containerd
+    kubelet_binary_remote_path: https://dl.k8s.io/v1.32.3/bin/linux/amd64/kubelet
+    kubelet_binary_local_path: /usr/local/bin
+    kubelet_binary_name: kubelet
+    kubelet_work_dir: /var/lib/kubelet
+    kube_proxy_binary_remote_path: https://dl.k8s.io/v1.32.3/bin/linux/amd64/kube-proxy
+    kube_proxy_binary_local_path: /usr/local/bin
+    kube_proxy_binary_name: kube-proxy
+    kube_proxy_work_dir: /var/lib/kube-proxy
+    cni_work_dir: /etc/cni
+
+    ca_crt: "{{ lookup('file','../ssl/ca.crt') + '\n' }}"

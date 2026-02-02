@@ -1,10 +1,27 @@
 ---
+- name: create working dir
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  loop:
+   - "{{ containerd_work_dir }}"
+  become: yes
+
+- name: check if binary already exists
+  stat:
+    path: "{{ containerd_binary_local_path }}/{{ containerd_binary_name }}"
+  register: binary_file_status
+
 - name: copy containerd binary
-  ansible.builtin.unarchive:
-    src: "{{ containerd_binary_remote_path }}"
+  unarchive:
+    src: "{{ containerd_binary_remote_pathz }}"
     dest: "{{ containerd_binary_local_path }}"
     remote_src: yes
+    extra_opts:
+      - "--strip-components=1"
   become: yes
+  when: not binary_file_status.stat.exists
 
 - name: change permissions
   file:
@@ -15,7 +32,7 @@
 - name: create config
   template:
     src: containerd.config.toml.j2
-    dest: /etc/containerd/config.toml
+    dest: "{{ containerd_work_dir }}/config.toml"
   become: yes
 
 - name: create systemd unit
@@ -23,5 +40,5 @@
     src: containerd.service.j2
     dest: /etc/systemd/system/containerd.service
   become: yes
-#  notify:
-#    - restart containerd 
+  notify:
+   - restart containerd

@@ -1,10 +1,16 @@
 ---
-#- name: copy etcd binary
-#  ansible.builtin.unarchive:
-#    src: "{{ etcd_binary_remote_path }}"
-#    dest: "{{ etcd_binary_local_path }}"
-#    remote_src: yes
-#  become: yes
+- name: check if binary already exists
+  ansible.builtin.stat:
+    path: "{{ etcd_binary_local_path }}/{{ etcd_binary_name }}"
+  register: binary_file_status
+
+- name: copy etcd binary
+  ansible.builtin.unarchive:
+    src: "{{ etcd_binary_remote_pathz }}"
+    dest: "{{ etcd_binary_local_path }}"
+    remote_src: yes
+  become: yes
+  when: not binary_file_status.stat.exists
 
 - name: change permissions
   file:

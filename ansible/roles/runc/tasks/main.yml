@@ -1,0 +1,18 @@
+---
+- name: check if binary already exists
+  ansible.builtin.stat:
+    path: "{{ runc_binary_local_path }}/{{ runc_binary_name }}"
+  register: binary_file_status
+
+- name: copy runc binary
+  get_url:
+    url: "{{ runc_binary_remote_path }}"
+    dest: "{{ runc_binary_local_path }}/{{ runc_binary_name }}"
+  become: yes
+  when: not binary_file_status.stat.exists
+
+- name: change permissions
+  file:
+    dest: "{{ runc_binary_local_path }}/{{ runc_binary_name }}"
+    mode: a+x
+  become: yes

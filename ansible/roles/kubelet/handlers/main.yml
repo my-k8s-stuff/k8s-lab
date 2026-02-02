@@ -1,6 +1,6 @@
 ---
-- name: restart kube-scheduler
+- name: restart kubelet
   systemd_service:
-    name: kube-scheduler
+    name: kubelet
     state: restarted
   become: yes

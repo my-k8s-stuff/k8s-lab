@@ -1,6 +1,6 @@
 ---
-- name: restart kube-scheduler
+- name: restart kube-proxy
   systemd_service:
-    name: kube-scheduler
+    name: kube-proxy
     state: restarted
   become: yes

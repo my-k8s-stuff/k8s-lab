@@ -1,7 +1,7 @@
 ---
 - name: check if binary already exists
   ansible.builtin.stat:
-    path: "{{ kube_controller_manager_binary_local_path }}/{{ kube_controller_manager_binary_name }}"
+    path: "{{ kube_apiserver_binary_local_path }}/{{ kube_apiserver_binary_name }}"
   register: binary_file_status
 
 - name: copy kube-apiserver binary

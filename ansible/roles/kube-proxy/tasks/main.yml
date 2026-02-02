@@ -1,0 +1,56 @@
+---
+- name: create working dir
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  loop:
+   - "{{ kube_proxy_work_dir }}"
+  become: yes
+
+- name: copy certificates
+  copy:
+    src: "../ssl/{{ item }}"
+    dest: "{{ kube_proxy_work_dir }}"
+  loop:
+    - "kube-proxy.crt"
+    - "kube-proxy.key"
+  become: yes
+
+- name: check if binary already exists
+  ansible.builtin.stat:
+    path: "{{ kube_proxy_binary_local_path }}/{{ kube_proxy_binary_name }}"
+  register: binary_file_status
+
+- name: copy kube-proxy binary
+  get_url:
+    url: "{{ kube_proxy_binary_remote_path }}"
+    dest: "{{ kube_proxy_binary_local_path }}"
+  become: yes
+  when: not binary_file_status.stat.exists
+
+- name: change permissions
+  file:
+    dest: "{{ kube_proxy_binary_local_path }}/{{ kube_proxy_binary_name }}"
+    mode: a+x
+  become: yes
+
+- name: generate kubeconfig
+  template:
+    src: kube-proxy.kubeconfig.j2
+    dest: "{{ kube_proxy_work_dir }}/kubeconfig"
+  become: yes
+
+- name: create systemd unit
+  template:
+    src: kube-proxy.service.j2
+    dest: /etc/systemd/system/kube-proxy.service
+  become: yes
+  notify:
+    - restart kube-proxy
+
+- name: enable systemd unit
+  systemd_service:
+    name: kube-proxy
+    enabled: true
+  become: yes

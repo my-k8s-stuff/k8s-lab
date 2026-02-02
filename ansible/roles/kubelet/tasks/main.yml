@@ -1,0 +1,63 @@
+---
+- name: create working dir
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  loop:
+   - "{{ kubelet_work_dir }}"
+  become: yes
+
+- name: copy certificates
+  copy:
+    src: "../ssl/{{ item }}"
+    dest: "{{ kubelet_work_dir }}"
+  loop:
+    - "{{ inventory_hostname }}.crt"
+    - "{{ inventory_hostname }}.key"
+    - "ca.crt"
+  become: yes
+
+- name: check if binary already exists
+  ansible.builtin.stat:
+    path: "{{ kubelet_binary_local_path }}/{{ kubelet_binary_name }}"
+  register: binary_file_status
+
+- name: copy kubelet binary
+  get_url:
+    url: "{{ kubelet_binary_remote_path }}"
+    dest: "{{ kubelet_binary_local_path }}"
+  become: yes
+  when: not binary_file_status.stat.exists
+
+- name: change permissions
+  file:
+    dest: "{{ kubelet_binary_local_path }}/{{ kubelet_binary_name }}"
+    mode: a+x
+  become: yes
+
+- name: generate kubeconfig
+  template:
+    src: kubelet.kubeconfig.j2
+    dest: "{{ kubelet_work_dir }}/kubeconfig"
+  become: yes
+
+- name: create config
+  template:
+    src: kubelet-config.yaml.j2
+    dest: "{{ kubelet_work_dir }}/kubelet-config.yaml"
+  become: yes
+
+- name: create systemd unit
+  template:
+    src: kubelet.service.j2
+    dest: /etc/systemd/system/kubelet.service
+  become: yes
+  notify:
+    - restart kubelet
+
+- name: enable systemd unit
+  systemd_service:
+    name: kubelet
+    enabled: true
+  become: yes
