@@ -30,20 +30,4 @@ Vagrant.configure("2") do |config|
       end
     end
   end
-
-  config.vm.provision "shell", inline: <<-SHELL
-    export DEBIAN_FRONTEND=noninteractive 
-    sudo apt-get update
-    sudo apt-get install -y vim
-    echo "set nocompatible" > /home/vagrant/.vimrc
-    echo "set paste" >> /home/vagrant/.vimrc
-  SHELL
-
-  # config.vm.provision "ansible" do |ansible|
-  #   ansible.playbook = "ansible/playbook.yml"
-  #   ansible.groups = {
-  #     "controllers" => ["controller-[0:2]"],
-  #     "workers" => ["worker-[0:2]"]
-  #   }
-  # end
 end
