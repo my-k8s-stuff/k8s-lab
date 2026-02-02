@@ -16,11 +16,25 @@
     path: "{{ etcd_binary_local_path }}/{{ etcd_binary_name }}"
   register: binary_file_status
 
-- name: copy etcd binary
+- name: unpack etcd binary
   ansible.builtin.unarchive:
     src: "{{ etcd_binary_remote_pathz }}"
-    dest: "{{ etcd_binary_local_path }}"
+    dest: /tmp
     remote_src: yes
+    extra_opts:
+      - "--strip-components=1"
+  become: yes
+  when: not binary_file_status.stat.exists
+
+- name: copy etcd binary
+  copy:
+    src: "/tmp/{{ item }}"
+    dest: "{{ etcd_binary_local_path }}/{{ item }}"
+    remote_src: yes
+  loop:
+    - "etcd"
+    - "etcdctl"
+    - "etcdutl"
   become: yes
   when: not binary_file_status.stat.exists
 
