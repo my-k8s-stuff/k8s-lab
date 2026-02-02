@@ -4,7 +4,7 @@ Documentation=https://github.com/kubernetes/kubernetes
 
 [Service]
 ExecStart=/usr/local/bin/kube-scheduler \
-  --config=/home/vagrant/kube-scheduler.yaml \
+  --config=/home/{{ ansible_user }}/kube-scheduler.yaml \
   --v=2
 Restart=on-failure
 RestartSec=5
