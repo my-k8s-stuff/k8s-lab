@@ -14,8 +14,6 @@ Vagrant.configure("2") do |config|
         vb.customize ["modifyvm", :id, "--cpus", "2"]
         vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
       master.vm.network "public_network", :adapter=>2, bridge: 'Qualcomm QCA61x4A 802.11ac Wireless Adapter', ip: "192.168.50.20#{i}"
-      # master.vm.network "private_network", :adapter=>2, ip: "192.168.56.1#{i}",
-      #   virtualbox__intnet: "k8s-lab"
       end
     end
   end
@@ -28,8 +26,7 @@ Vagrant.configure("2") do |config|
         vb.customize ["modifyvm", :id, "--memory", "2048"]
         vb.customize ["modifyvm", :id, "--cpus", "2"]
         vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-      node.vm.network "private_network", :adapter=>2, ip: "192.168.56.2#{i}",
-        virtualbox__intnet: "k8s-lab"
+      node.vm.network "public_network", :adapter=>2, bridge: 'Qualcomm QCA61x4A 802.11ac Wireless Adapter', ip: "192.168.50.21#{i}"
       end
     end
   end
