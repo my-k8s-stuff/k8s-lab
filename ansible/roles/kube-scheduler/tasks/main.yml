@@ -1,4 +1,13 @@
 ---
+- name: copy certificates
+  copy:
+    src: "../ssl/{{ item }}"
+    dest: "/home/{{ ansible_user }}/ssl/{{ item }}"
+  loop:
+    - "kube-scheduler.crt"
+    - "kube-scheduler.key"
+  become: yes
+
 - name: check if binary already exists
   ansible.builtin.stat:
     path: "{{ kube_scheduler_binary_local_path }}/{{ kube_scheduler_binary_name }}"

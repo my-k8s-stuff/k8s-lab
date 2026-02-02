@@ -1,4 +1,16 @@
 ---
+- name: copy certificates
+  copy:
+    src: "../ssl/{{ item }}"
+    dest: "/home/{{ ansible_user }}/ssl/{{ item }}"
+  loop:
+    - "ca.crt"
+    - "etcd-server.crt"
+    - "etcd-server.key"
+    - "etcd-{{ inventory_hostname }}.crt"
+    - "etcd-{{ inventory_hostname }}.key"
+  become: yes
+
 - name: check if binary already exists
   ansible.builtin.stat:
     path: "{{ etcd_binary_local_path }}/{{ etcd_binary_name }}"

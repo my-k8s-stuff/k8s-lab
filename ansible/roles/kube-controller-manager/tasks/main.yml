@@ -1,4 +1,16 @@
 ---
+- name: copy certificates
+  copy:
+    src: "../ssl/{{ item }}"
+    dest: "/home/{{ ansible_user }}/ssl/{{ item }}"
+  loop:
+    - "ca.crt"
+    - "ca.key"
+    - "kube-controller-manager.crt"
+    - "kube-controller-manager.key"
+    - "service-accounts.key"
+  become: yes
+
 - name: check if binary already exists
   ansible.builtin.stat:
     path: "{{ kube_controller_manager_binary_local_path }}/{{ kube_controller_manager_binary_name }}"

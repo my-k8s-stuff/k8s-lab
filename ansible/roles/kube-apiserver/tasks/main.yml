@@ -1,4 +1,18 @@
 ---
+- name: copy certificates
+  copy:
+    src: "../ssl/{{ item }}"
+    dest: "/home/{{ ansible_user }}/ssl/{{ item }}"
+  loop:
+    - "ca.crt"
+    - "etcd-server.crt"
+    - "etcd-server.key"
+    - "kube-apiserver.crt"
+    - "kube-apiserver.key"
+    - "service-accounts.crt"
+    - "service-accounts.key"
+  become: yes
+
 - name: check if binary already exists
   ansible.builtin.stat:
     path: "{{ kube_apiserver_binary_local_path }}/{{ kube_apiserver_binary_name }}"

@@ -12,3 +12,9 @@
     src: .vimrc.j2
     dest: /home/{{ ansible_user }}/.vimrc
   tags: qol
+
+- name: create ssl dir
+  file:
+    path: /home/{{ ansible_user }}/ssl
+    state: directory
+    mode: 0755
