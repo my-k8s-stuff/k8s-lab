@@ -9,6 +9,7 @@
     - containerd
     - kubelet
     - kube-proxy
+    - cni-plugins
 
   vars:
     cluster_name: k8s-lab
@@ -32,6 +33,8 @@
     kube_proxy_binary_local_path: /usr/local/bin
     kube_proxy_binary_name: kube-proxy
     kube_proxy_work_dir: /var/lib/kube-proxy
-    cni_work_dir: /etc/cni
+    cni_binary_remote_pathz: https://github.com/containernetworking/plugins/releases/download/v1.6.2/cni-plugins-linux-amd64-v1.6.2.tgz
+    cni_bin_dir: /opt/cni/bin
+    cni_conf_dir: /etc/cni/net.d
 
     ca_crt: "{{ lookup('file','../ssl/ca.crt') + '\n' }}"

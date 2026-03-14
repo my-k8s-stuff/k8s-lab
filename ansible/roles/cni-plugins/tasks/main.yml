@@ -1,0 +1,37 @@
+---
+- name: create working dir
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  loop:
+   - "{{ cni_bin_dir }}"
+   - "{{ cni_conf_dir }}"
+  become: yes
+
+- name: copy cni plugins
+  unarchive:
+    src: "{{ cni_binary_remote_pathz }}"
+    dest: "{{ cni_bin_dir }}"
+    remote_src: yes
+  become: yes
+
+- name: copy loopback config
+  copy:
+    src: "{{ item }}"
+    dest: "{{ cni_conf_dir }}"
+  loop:
+    - "99-loopback.conf"
+  become: yes
+  notify:
+   - restart containerd
+
+- name: create bridge config
+  template:
+    src: "{{ item }}"
+    dest: "{{ cni_conf_dir }}/{{ item }}"
+  loop:
+    - "10-bridge.conf"
+  become: yes
+  notify:
+   - restart containerd
