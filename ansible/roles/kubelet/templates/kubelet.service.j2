@@ -8,6 +8,7 @@ Requires=containerd.service
 ExecStart={{ kubelet_binary_local_path }}/{{ kubelet_binary_name }} \
   --config={{ kubelet_work_dir }}/kubelet-config.yaml \
   --kubeconfig={{ kubelet_work_dir }}/kubeconfig \
+  --node-ip={{ ansible_host }}
   --v=2
 Restart=on-failure
 RestartSec=5
