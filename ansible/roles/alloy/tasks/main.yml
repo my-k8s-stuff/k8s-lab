@@ -1,0 +1,43 @@
+---
+- name: create working dir
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  loop:
+   - "{{ alloy_conf_dir }}"
+   - "{{ alloy_data_dir }}"
+  become: yes
+
+- name: check if binary already exists
+  ansible.builtin.stat:
+    path: "{{ alloy_binary_local_path }}/{{ alloy_binary_name }}"
+  register: binary_file_status
+
+- name: install binary
+  apt:
+    deb: "{{ alloy_binary_remote_path }}"
+  become: yes
+  when: not binary_file_status.stat.exists
+
+- name: generate config
+  template:
+    src: config.alloy.j2
+    dest: "{{ alloy_conf_dir }}/config.alloy"
+  become: yes
+  notify:
+    - restart alloy
+
+- name: create systemd unit
+  template:
+    src: alloy.service.j2
+    dest: /etc/systemd/system/alloy.service
+  become: yes
+  notify:
+    - restart alloy
+
+- name: enable systemd unit
+  systemd_service:
+    name: alloy
+    enabled: true
+  become: yes

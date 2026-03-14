@@ -1,0 +1,29 @@
+logging {
+  level    = "info"
+  format   = "json"
+  write_to = [loki.write.default.receiver]
+}
+
+loki.relabel "journal" {
+  forward_to = []
+  rule {
+    source_labels = ["__journal__systemd_unit"]
+    target_label  = "unit"
+  }
+}
+
+loki.source.journal "journalctl"  {
+  forward_to    = [loki.write.default.receiver]
+  relabel_rules = loki.relabel.journal.rules
+  labels        = {
+    component = "loki.source.journal",
+    instance = constants.hostname,
+  }
+  matches = "_SYSTEMD_UNIT=etcd.service _SYSTEMD_UNIT=kube-apiserver.service"
+}
+
+loki.write "default" {
+  endpoint {
+    url = "http://172.28.126.151:3100/loki/api/v1/push"
+  }
+}

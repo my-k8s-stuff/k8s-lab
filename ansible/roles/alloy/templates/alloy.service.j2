@@ -1,0 +1,14 @@
+[Unit]
+Description=Grafana Alloy
+Documentation=https://github.com/grafana/alloy
+
+[Service]
+ExecStart={{ alloy_binary_local_path }}/{{ alloy_binary_name }} run \
+  --server.http.listen-addr={{ ansible_host }}:12345 \
+  --storage.path={{ alloy_data_dir }} \
+  {{ alloy_conf_dir }}/config.alloy
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,6 @@
+---
+- name: restart alloy
+  systemd_service:
+    name: alloy
+    state: restarted
+  become: yes

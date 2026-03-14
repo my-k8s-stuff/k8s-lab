@@ -8,10 +8,17 @@
     - kube-apiserver
     - kube-controller-manager
     - kube-scheduler
+    - alloy
 
   vars:
     cluster_name: k8s-lab
     cluster_api_endpoint: "192.168.50.200"
+
+    alloy_binary_remote_path: https://github.com/grafana/alloy/releases/download/v1.14.0/alloy-1.14.0-1.amd64.deb
+    alloy_binary_local_path: /usr/bin
+    alloy_binary_name: alloy
+    alloy_conf_dir: /etc/alloy
+    alloy_data_dir: /var/lib/alloy/data
 
     etcd_binary_remote_pathz: https://github.com/etcd-io/etcd/releases/download/v3.6.0-rc.3/etcd-v3.6.0-rc.3-linux-amd64.tar.gz
     etcd_binary_local_path: /usr/local/bin
