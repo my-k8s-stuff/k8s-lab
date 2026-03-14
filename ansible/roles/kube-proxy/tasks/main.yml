@@ -35,6 +35,12 @@
     mode: a+x
   become: yes
 
+- name: generate config
+  template:
+    src: kube-proxy-config.yaml.j2
+    dest: "{{ kube_proxy_work_dir }}/kube-proxy-config.yaml"
+  become: yes
+
 - name: generate kubeconfig
   template:
     src: kube-proxy.kubeconfig.j2
